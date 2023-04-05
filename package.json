@@ -29,5 +29,8 @@
     "@opentelemetry/resources": "1.11.0",
     "@opentelemetry/sdk-metrics": "1.11.0",
     "@opentelemetry/semantic-conventions": "1.11.0"
+  },
+  "devDependencies": {
+    "@tsconfig/recommended": "1.0.2"
   }
 }

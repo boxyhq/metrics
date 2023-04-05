@@ -1,7 +1,11 @@
-import type { Attributes, MetricOptions, ObservableGauge } from '@opentelemetry/api';
-import { acquireMeter } from '../lib/meter';
+import type {
+  Attributes,
+  MetricOptions,
+  ObservableGauge,
+} from "@opentelemetry/api";
+import { acquireMeter } from "../lib/meter";
 
-const gauges = {};
+const gauges: Record<string, ObservableGauge<Attributes>> = {};
 
 type operationParams = {
   meter: string;
@@ -11,8 +15,14 @@ type operationParams = {
   gaugeAttributes?: Attributes;
 };
 
-const observeGauge = ({ meter, name, val, gaugeOptions, gaugeAttributes }: operationParams) => {
-  let gauge: ObservableGauge<Attributes> = gauges[name];
+const observeGauge = ({
+  meter,
+  name,
+  val,
+  gaugeOptions,
+  gaugeAttributes,
+}: operationParams) => {
+  let gauge = gauges[name];
   if (gauge === undefined) {
     const _otelMeter = acquireMeter(meter);
     gauge = gauges[name] = _otelMeter.createObservableGauge(name, gaugeOptions);

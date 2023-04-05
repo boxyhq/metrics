@@ -1,5 +1,6 @@
 import { incrementCounter } from "./counter";
 import { recordHistogram } from "./histogram";
+import { recordTimer } from "./timer";
 
 type instrumentParams = {
   /** OTel meter name */
@@ -30,11 +31,11 @@ async function instrument({ meter, name, delegate }: instrumentParams) {
   } finally {
     const elapsed = process.hrtime(start);
     const elapsedNanos = elapsed[0] * 1000000000 + elapsed[1];
-    recordHistogram({
+    recordTimer({
       meter,
       name: "function.executionTime",
       val: elapsedNanos,
-      histogramAttributes: { function: name },
+      timerAttributes: { function: name },
     });
   }
 }
@@ -59,7 +60,7 @@ function instrumented(
   const klass = target.constructor.name;
 
   // this needs to be a non-arrow function or we'll get the wrong `this`
-  function overrideMethod(...args) {
+  function overrideMethod(this: unknown, ...args: any[]) {
     return instrument({
       meter,
       name: `${klass}.${key}`,

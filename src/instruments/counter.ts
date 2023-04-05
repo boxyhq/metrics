@@ -1,7 +1,7 @@
-import type { Attributes, Counter, MetricOptions } from '@opentelemetry/api';
-import { acquireMeter } from '../lib/meter';
+import type { Attributes, Counter, MetricOptions } from "@opentelemetry/api";
+import { acquireMeter } from "../lib/meter";
 
-const counters = {};
+const counters: Record<string, Counter<Attributes>> = {};
 
 type operationParams = {
   meter: string;
@@ -11,8 +11,14 @@ type operationParams = {
   counterAttributes?: Attributes;
 };
 
-const incrementCounter = ({ meter, name, inc = 1, counterOptions, counterAttributes }: operationParams) => {
-  let counter: Counter<Attributes> = counters[name];
+const incrementCounter = ({
+  meter,
+  name,
+  inc = 1,
+  counterOptions,
+  counterAttributes,
+}: operationParams) => {
+  let counter = counters[name];
   if (counter === undefined) {
     const _otelMeter = acquireMeter(meter);
     counter = counters[name] = _otelMeter.createCounter(name, counterOptions);

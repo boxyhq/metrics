@@ -1,7 +1,7 @@
-import type { Attributes, MetricOptions, Histogram } from '@opentelemetry/api';
-import { acquireMeter } from '../lib/meter';
+import type { Attributes, MetricOptions, Histogram } from "@opentelemetry/api";
+import { acquireMeter } from "../lib/meter";
 
-const histograms = {};
+const histograms: Record<string, Histogram<Attributes>> = {};
 
 type operationParams = {
   meter: string;
@@ -11,11 +11,20 @@ type operationParams = {
   histogramAttributes?: Attributes;
 };
 
-const recordHistogram = ({ meter, name, val, histogramOptions, histogramAttributes }: operationParams) => {
-  let histogram: Histogram<Attributes> = histograms[name];
+const recordHistogram = ({
+  meter,
+  name,
+  val,
+  histogramOptions,
+  histogramAttributes,
+}: operationParams) => {
+  let histogram = histograms[name];
   if (histogram === undefined) {
     const _otelMeter = acquireMeter(meter);
-    histogram = histograms[name] = _otelMeter.createHistogram(name, histogramOptions);
+    histogram = histograms[name] = _otelMeter.createHistogram(
+      name,
+      histogramOptions
+    );
   }
   histogram.record(val, histogramAttributes);
 };

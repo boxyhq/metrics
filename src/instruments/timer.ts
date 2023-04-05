@@ -1,9 +1,9 @@
 import type { Attributes, MetricOptions, Histogram } from "@opentelemetry/api";
 import { acquireMeter } from "../lib/meter";
 
-const timers = {};
+const timers: Record<string, Histogram<Attributes>> = {};
 
-type operationParams = {
+type OperationParams = {
   meter: string;
   name: string;
   val: number;
@@ -17,8 +17,8 @@ const recordTimer = ({
   val,
   timerOptions,
   timerAttributes,
-}: operationParams) => {
-  let timer: Histogram<Attributes> = timers[name];
+}: OperationParams) => {
+  let timer = timers[name];
   if (timer === undefined) {
     const _otelMeter = acquireMeter(meter);
     timer = timers[name] = _otelMeter.createHistogram(name, {
