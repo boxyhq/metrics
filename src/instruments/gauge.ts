@@ -7,7 +7,7 @@ import { acquireMeter } from "../lib/meter";
 
 const gauges: Record<string, ObservableGauge<Attributes>> = {};
 
-type operationParams = {
+type OperationParams = {
   meter: string;
   name: string;
   val: number;
@@ -21,7 +21,7 @@ const observeGauge = ({
   val,
   gaugeOptions,
   gaugeAttributes,
-}: operationParams) => {
+}: OperationParams) => {
   let gauge = gauges[name];
   if (gauge === undefined) {
     const _otelMeter = acquireMeter(meter);

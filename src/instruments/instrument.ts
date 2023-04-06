@@ -1,8 +1,7 @@
 import { incrementCounter } from "./counter";
-import { recordHistogram } from "./histogram";
 import { recordTimer } from "./timer";
 
-type instrumentParams = {
+type InstrumentParams = {
   /** OTel meter name */
   meter: string;
   /** Function name being instrumented */
@@ -17,7 +16,7 @@ type instrumentParams = {
  * @param operationParams
  */
 
-async function instrument({ meter, name, delegate }: instrumentParams) {
+async function instrument({ meter, name, delegate }: InstrumentParams) {
   const start = process.hrtime();
   try {
     return await delegate();

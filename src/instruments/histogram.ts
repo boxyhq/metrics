@@ -3,7 +3,7 @@ import { acquireMeter } from "../lib/meter";
 
 const histograms: Record<string, Histogram<Attributes>> = {};
 
-type operationParams = {
+type OperationParams = {
   meter: string;
   name: string;
   val: number;
@@ -17,7 +17,7 @@ const recordHistogram = ({
   val,
   histogramOptions,
   histogramAttributes,
-}: operationParams) => {
+}: OperationParams) => {
   let histogram = histograms[name];
   if (histogram === undefined) {
     const _otelMeter = acquireMeter(meter);

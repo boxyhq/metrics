@@ -3,7 +3,7 @@ import { acquireMeter } from "../lib/meter";
 
 const counters: Record<string, Counter<Attributes>> = {};
 
-type operationParams = {
+type OperationParams = {
   meter: string;
   name: string;
   inc?: number;
@@ -17,7 +17,7 @@ const incrementCounter = ({
   inc = 1,
   counterOptions,
   counterAttributes,
-}: operationParams) => {
+}: OperationParams) => {
   let counter = counters[name];
   if (counter === undefined) {
     const _otelMeter = acquireMeter(meter);
