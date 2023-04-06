@@ -51,4 +51,4 @@ jobs:
           echo "PUBLISH_TAG=${publishTag}" >> $GITHUB_OUTPUT
       - run: npm publish --tag ${{ steps.version.outputs.PUBLISH_TAG }} --access public
         env:
-          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
