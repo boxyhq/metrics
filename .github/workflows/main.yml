@@ -4,8 +4,16 @@
 name: Node.js Package
 
 on:
-  release:
-    types: [created]
+  push:
+    branches:
+      - main
+      - release
+    tags:
+      - "beta-v*"
+  pull_request:
+    # Trigger only for PRs that target main branch
+    branches:
+      - main
 
 jobs:
   build:
@@ -34,21 +42,22 @@ jobs:
           npm install -g json
           JACKSON_VERSION=$(echo $(cat package.json) | json version)
 
-          # publishTag="latest"
+          publishTag="latest"
 
-          # if [[ "$GITHUB_REF" == *\/release ]]
-          # then
-          #   echo "Release branch"
-          # else
-            echo "Beta release"
+          if [[ "$GITHUB_REF" == *\/release ]]
+          then
+            echo "Release branch"
+          else
+            echo "Dev branch"
             publishTag="beta"
             JACKSON_VERSION="${JACKSON_VERSION}-beta.${GITHUB_RUN_NUMBER}"
-          # fi
+          fi
 
           json -I -f package.json -e "this.version=\"${JACKSON_VERSION}\""
 
           echo "NPM_VERSION=${JACKSON_VERSION}" >> $GITHUB_OUTPUT
           echo "PUBLISH_TAG=${publishTag}" >> $GITHUB_OUTPUT
       - run: npm publish --tag ${{ steps.version.outputs.PUBLISH_TAG }} --access public
+        if: github.ref == 'refs/heads/release' || contains(github.ref, 'refs/tags/beta-v')
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
