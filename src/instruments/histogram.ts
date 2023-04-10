@@ -3,11 +3,16 @@ import { acquireMeter } from "../lib/meter";
 
 const histograms: Record<string, Histogram<Attributes>> = {};
 
-type OperationParams = {
+type HistogramOperationParams = {
+  /** OTel meter name */
   meter: string;
+  /** Metric name being instrumented */
   name: string;
+  /** Value to be recorded  */
   val: number;
+  /** MetricOptions such as unit */
   histogramOptions?: MetricOptions;
+  /** Metric Attributes in the form of key value pairs */
   histogramAttributes?: Attributes;
 };
 
@@ -17,7 +22,7 @@ const recordHistogram = ({
   val,
   histogramOptions,
   histogramAttributes,
-}: OperationParams) => {
+}: HistogramOperationParams) => {
   let histogram = histograms[name];
   if (histogram === undefined) {
     const _otelMeter = acquireMeter(meter);
@@ -29,4 +34,4 @@ const recordHistogram = ({
   histogram.record(val, histogramAttributes);
 };
 
-export { recordHistogram };
+export { recordHistogram, type HistogramOperationParams };

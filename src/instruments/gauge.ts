@@ -7,11 +7,16 @@ import { acquireMeter } from "../lib/meter";
 
 const gauges: Record<string, ObservableGauge<Attributes>> = {};
 
-type OperationParams = {
+type GaugeOperationParams = {
+  /** OTel meter name */
   meter: string;
+  /** Metric name being instrumented */
   name: string;
+  /** Non-additive value observed at a point in time */
   val: number;
+  /** MetricOptions such as unit */
   gaugeOptions?: MetricOptions;
+  /** Metric Attributes in the form of key value pairs */
   gaugeAttributes?: Attributes;
 };
 
@@ -21,7 +26,7 @@ const observeGauge = ({
   val,
   gaugeOptions,
   gaugeAttributes,
-}: OperationParams) => {
+}: GaugeOperationParams) => {
   let gauge = gauges[name];
   if (gauge === undefined) {
     const _otelMeter = acquireMeter(meter);
@@ -32,4 +37,4 @@ const observeGauge = ({
   });
 };
 
-export { observeGauge };
+export { observeGauge, type GaugeOperationParams };
