@@ -1,6 +1,6 @@
-import type { Attributes } from "@opentelemetry/api";
-import { incrementCounter } from "./counter";
-import { recordTimer } from "./timer";
+import type { Attributes } from '@opentelemetry/api';
+import { incrementCounter } from './counter';
+import { recordTimer } from './timer';
 
 type InstrumentOperationParams = {
   /** OTel meter name */
@@ -19,19 +19,14 @@ type InstrumentOperationParams = {
  * @param operationParams
  */
 
-async function instrument({
-  meter,
-  name,
-  delegate,
-  instrumentAttributes,
-}: InstrumentOperationParams) {
+async function instrument({ meter, name, delegate, instrumentAttributes }: InstrumentOperationParams) {
   const start = process.hrtime();
   try {
     return await delegate();
   } catch (err) {
     incrementCounter({
       meter,
-      name: "function.errors",
+      name: 'function.errors',
       counterAttributes: { function: name, ...instrumentAttributes },
     });
     throw err;
@@ -40,7 +35,7 @@ async function instrument({
     const elapsedNanos = elapsed[0] * 1000000000 + elapsed[1];
     recordTimer({
       meter,
-      name: "function.executionTime",
+      name: 'function.executionTime',
       val: elapsedNanos,
       timerAttributes: { function: name, ...instrumentAttributes },
     });

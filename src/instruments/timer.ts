@@ -1,5 +1,5 @@
-import type { Attributes, MetricOptions, Histogram } from "@opentelemetry/api";
-import { acquireMeter } from "../lib/meter";
+import type { Attributes, MetricOptions, Histogram } from '@opentelemetry/api';
+import { acquireMeter } from '../lib/meter';
 
 const timers: Record<string, Histogram<Attributes>> = {};
 
@@ -16,19 +16,13 @@ type TimerOperationParams = {
   timerAttributes?: Attributes;
 };
 
-const recordTimer = ({
-  meter,
-  name,
-  val,
-  timerOptions,
-  timerAttributes,
-}: TimerOperationParams) => {
+const recordTimer = ({ meter, name, val, timerOptions, timerAttributes }: TimerOperationParams) => {
   let timer = timers[name];
   if (timer === undefined) {
     const _otelMeter = acquireMeter(meter);
     timer = timers[name] = _otelMeter.createHistogram(name, {
       ...timerOptions,
-      unit: "ns",
+      unit: 'ns',
     });
   }
   timer.record(val, timerAttributes);

@@ -1,5 +1,5 @@
-import type { Attributes, MetricOptions, Histogram } from "@opentelemetry/api";
-import { acquireMeter } from "../lib/meter";
+import type { Attributes, MetricOptions, Histogram } from '@opentelemetry/api';
+import { acquireMeter } from '../lib/meter';
 
 const histograms: Record<string, Histogram<Attributes>> = {};
 
@@ -26,10 +26,7 @@ const recordHistogram = ({
   let histogram = histograms[name];
   if (histogram === undefined) {
     const _otelMeter = acquireMeter(meter);
-    histogram = histograms[name] = _otelMeter.createHistogram(
-      name,
-      histogramOptions
-    );
+    histogram = histograms[name] = _otelMeter.createHistogram(name, histogramOptions);
   }
   histogram.record(val, histogramAttributes);
 };

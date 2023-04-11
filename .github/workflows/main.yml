@@ -9,7 +9,7 @@ on:
       - main
       - release
     tags:
-      - "beta-v*"
+      - 'beta-v*'
   pull_request:
     # Trigger only for PRs that target main branch
     branches:
@@ -24,6 +24,7 @@ jobs:
         with:
           node-version: 18
       - run: npm ci
+      - run: npm run lint
       - run: npm test --if-present
 
   publish-npm:
