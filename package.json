@@ -10,13 +10,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "prepublishOnly": "npm run build",
-    "prepare": "husky install"
-  },
-  "lint-staged": {
-    "*.{js,ts}": [
-      "eslint --cache --fix",
-      "prettier --write"
-    ]
+    "lint": "eslint -c .eslintrc.json --ext .ts ./"
   },
   "repository": {
     "type": "git",
@@ -46,8 +40,6 @@
     "@typescript-eslint/parser": "5.57.1",
     "eslint": "8.38.0",
     "eslint-config-prettier": "8.8.0",
-    "husky": "8.0.3",
-    "lint-staged": "13.2.1",
     "prettier": "2.8.7",
     "typescript": "5.0.4"
   }
