@@ -1,3 +1,4 @@
+import type { Attributes } from "@opentelemetry/api";
 import { incrementCounter } from "./counter";
 import { recordTimer } from "./timer";
 
@@ -8,6 +9,8 @@ type InstrumentOperationParams = {
   name: string;
   /** Handle to execute the function */
   delegate: () => unknown;
+  /** Metric Attributes in the form of key value pairs  */
+  instrumentAttributes?: Attributes;
 };
 
 /**
@@ -20,6 +23,7 @@ async function instrument({
   meter,
   name,
   delegate,
+  instrumentAttributes,
 }: InstrumentOperationParams) {
   const start = process.hrtime();
   try {
@@ -28,7 +32,7 @@ async function instrument({
     incrementCounter({
       meter,
       name: "function.errors",
-      counterAttributes: { function: name },
+      counterAttributes: { function: name, ...instrumentAttributes },
     });
     throw err;
   } finally {
@@ -38,7 +42,7 @@ async function instrument({
       meter,
       name: "function.executionTime",
       val: elapsedNanos,
-      timerAttributes: { function: name },
+      timerAttributes: { function: name, ...instrumentAttributes },
     });
   }
 }
