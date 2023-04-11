@@ -14,8 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/boxyhq/jackson.git",
-    "directory": "metrics"
+    "url": "git+https://github.com/boxyhq/metrics.git"
   },
   "keywords": [
     "otel",
@@ -23,9 +22,9 @@
   ],
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/boxyhq/jackson/issues"
+    "url": "https://github.com/boxyhq/metrics/issues"
   },
-  "homepage": "https://github.com/boxyhq/jackson#readme",
+  "homepage": "https://github.com/boxyhq/metrics#readme",
   "dependencies": {
     "@opentelemetry/api": "1.4.1",
     "@opentelemetry/exporter-metrics-otlp-grpc": "0.37.0",
