@@ -1,5 +1,5 @@
-import type { Attributes, Counter, MetricOptions } from "@opentelemetry/api";
-import { acquireMeter } from "../lib/meter";
+import type { Attributes, Counter, MetricOptions } from '@opentelemetry/api';
+import { acquireMeter } from '../lib/meter';
 
 const counters: Record<string, Counter<Attributes>> = {};
 
