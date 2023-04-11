@@ -3,11 +3,16 @@ import { acquireMeter } from "../lib/meter";
 
 const timers: Record<string, Histogram<Attributes>> = {};
 
-type OperationParams = {
+type TimerOperationParams = {
+  /** OTel meter name */
   meter: string;
+  /** Metric name being instrumented */
   name: string;
+  /** Timer value to be recorded */
   val: number;
+  /** MetricOptions such as unit */
   timerOptions?: MetricOptions;
+  /** Metric Attributes in the form of key value pairs */
   timerAttributes?: Attributes;
 };
 
@@ -17,7 +22,7 @@ const recordTimer = ({
   val,
   timerOptions,
   timerAttributes,
-}: OperationParams) => {
+}: TimerOperationParams) => {
   let timer = timers[name];
   if (timer === undefined) {
     const _otelMeter = acquireMeter(meter);
@@ -29,4 +34,4 @@ const recordTimer = ({
   timer.record(val, timerAttributes);
 };
 
-export { recordTimer };
+export { recordTimer, type TimerOperationParams };
