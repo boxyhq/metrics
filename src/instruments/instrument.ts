@@ -36,7 +36,7 @@ async function instrument({ meter, name, delegate, instrumentAttributes }: Instr
     recordTimer({
       meter,
       name: 'function.executionTime',
-      val: Number(elapsedNanos) /** convert bigint to number here */,
+      val: Number(elapsedNanos) /** convert bigint to number */,
       timerAttributes: { function: name, ...instrumentAttributes },
     });
   }
