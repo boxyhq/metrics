@@ -20,7 +20,7 @@ type InstrumentOperationParams = {
  */
 
 async function instrument({ meter, name, delegate, instrumentAttributes }: InstrumentOperationParams) {
-  const start = process.hrtime();
+  const start = process.hrtime.bigint();
   try {
     return await delegate();
   } catch (err) {
@@ -31,12 +31,12 @@ async function instrument({ meter, name, delegate, instrumentAttributes }: Instr
     });
     throw err;
   } finally {
-    const elapsed = process.hrtime(start);
-    const elapsedNanos = elapsed[0] * 1000000000 + elapsed[1];
+    const end = process.hrtime.bigint();
+    const elapsedNanos = end - start;
     recordTimer({
       meter,
       name: 'function.executionTime',
-      val: elapsedNanos,
+      val: Number(elapsedNanos) /** convert bigint to number here */,
       timerAttributes: { function: name, ...instrumentAttributes },
     });
   }
