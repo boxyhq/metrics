@@ -46,7 +46,6 @@ function initializeMetrics(serviceInfo: ServiceInfo) {
   }
 
   if (process.env.OTEL_EXPORTER_DEBUG) {
-    diag.disable();
     diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.DEBUG);
   }
 }
