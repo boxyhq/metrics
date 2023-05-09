@@ -35,10 +35,15 @@ function initializeMetrics(serviceInfo: ServiceInfo) {
       metricExporter = new OTLPMetricExporter();
     }
 
+    /** exportIntervalMillis must be greater than exportTimeoutMillis */
+    const exportIntervalMillis = Number(process.env.OTEL_EXPORT_INTERVAL_MS) || 60000;
+    const exportTimeoutMillis = Number(process.env.OTEL_EXPORT_INTERVAL_MS) - 1000 || 30000;
+
     meterProvider.addMetricReader(
       new PeriodicExportingMetricReader({
         exporter: metricExporter,
-        exportIntervalMillis: 60000,
+        exportIntervalMillis,
+        exportTimeoutMillis,
       })
     );
 
@@ -46,7 +51,6 @@ function initializeMetrics(serviceInfo: ServiceInfo) {
   }
 
   if (process.env.OTEL_EXPORTER_DEBUG) {
-    diag.disable();
     diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.DEBUG);
   }
 }
