@@ -41,9 +41,10 @@ async function testInstruments() {
   });
 
   console.log(`Operation for function instrumentation ... DONE`);
-  console.log(`Waiting for export to happen ....`);
-  /** Essential to set a timeout below that is more than the export interval of 60 seconds*/
-  await setTimeout(70000);
+  /** Essential to set a timeout below that is more than the export interval*/
+  const waitTime = Number(process.env.OTEL_EXPORT_INTERVAL_MS) + 1000 || 61000;
+  console.log(`Waiting for ${waitTime}ms to complete export ....`);
+  await setTimeout(waitTime);
   console.log(`Export operation ... COMPLETE, please check the configured OTEL service for recorded values`);
 }
 
