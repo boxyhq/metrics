@@ -36,7 +36,7 @@
   },
   "devDependencies": {
     "@tsconfig/recommended": "1.0.2",
-    "@typescript-eslint/eslint-plugin": "5.60.0",
+    "@typescript-eslint/eslint-plugin": "5.61.0",
     "@typescript-eslint/parser": "5.61.0",
     "env-cmd": "10.1.0",
     "eslint": "8.43.0",
