@@ -25,6 +25,7 @@ jobs:
           node-version: 18
       - run: npm ci
       - run: npm run lint
+      - run: npm run check-format
       - run: npm test --if-present
 
   publish-npm:
