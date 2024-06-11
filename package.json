@@ -1,6 +1,6 @@
 {
   "name": "@boxyhq/metrics",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "description": "Internal SDK for OTel instrumentation",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
