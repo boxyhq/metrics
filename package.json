@@ -10,7 +10,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "prepublishOnly": "npm run build",
-    "lint": "eslint -c .eslintrc.json --ext .ts ./",
+    "lint": "eslint -c eslint.config.mjs ./",
     "test:manual": "env-cmd -f ./test/.env ts-node --project tsconfig.json test/index.ts",
     "check-format": "prettier --check .",
     "format": "prettier --write .",
@@ -39,11 +39,12 @@
     "@opentelemetry/semantic-conventions": "1.25.1"
   },
   "devDependencies": {
+    "@eslint/compat": "1.1.1",
     "@tsconfig/recommended": "1.0.7",
     "@typescript-eslint/eslint-plugin": "8.1.0",
     "@typescript-eslint/parser": "8.1.0",
     "env-cmd": "10.1.0",
-    "eslint": "8.57.0",
+    "eslint": "9.9.0",
     "eslint-config-prettier": "9.1.0",
     "prettier": "3.3.3",
     "release-it": "17.6.0",
