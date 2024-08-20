@@ -9,6 +9,13 @@ updates:
     directory: '/' # Location of package manifests
     schedule:
       interval: 'daily'
+    groups:
+      typescript-eslint:
+        patterns:
+          - '@typescript-eslint/*'
+      opentelemetry:
+        patterns:
+          - '@opentelemetry/*'
   - package-ecosystem: 'github-actions'
     directory: '/'
     schedule:
