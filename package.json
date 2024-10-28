@@ -40,7 +40,7 @@
   },
   "devDependencies": {
     "@eslint/compat": "1.2.1",
-    "@tsconfig/recommended": "1.0.7",
+    "@tsconfig/recommended": "1.0.8",
     "@typescript-eslint/eslint-plugin": "8.11.0",
     "@typescript-eslint/parser": "8.11.0",
     "env-cmd": "10.1.0",
