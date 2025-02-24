@@ -39,7 +39,7 @@
     "@opentelemetry/semantic-conventions": "1.30.0"
   },
   "devDependencies": {
-    "@eslint/compat": "1.2.6",
+    "@eslint/compat": "1.2.7",
     "@tsconfig/recommended": "1.0.8",
     "@typescript-eslint/eslint-plugin": "8.24.1",
     "@typescript-eslint/parser": "8.24.1",
