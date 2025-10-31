@@ -2,7 +2,7 @@ import { DiagConsoleLogger, DiagLogLevel, diag, metrics } from '@opentelemetry/a
 import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-http';
 import { OTLPMetricExporter as OTLPMetricExporterGRPC } from '@opentelemetry/exporter-metrics-otlp-grpc';
 import { MeterProvider, PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
-import { Resource } from '@opentelemetry/resources';
+import { resourceFromAttributes } from '@opentelemetry/resources';
 import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
 
 type ServiceInfo = {
@@ -18,12 +18,9 @@ type ServiceInfo = {
 
 function initializeMetrics(serviceInfo: ServiceInfo) {
   if (process.env.OTEL_EXPORTER_OTLP_METRICS_ENDPOINT || process.env.OTEL_EXPORTER_OTLP_ENDPOINT) {
-    const meterProvider = new MeterProvider({
-      resource: new Resource({
-        [SemanticResourceAttributes.SERVICE_NAME]: `${serviceInfo.name}`,
-        [SemanticResourceAttributes.SERVICE_VERSION]: `${serviceInfo.version}`,
-      }),
-    });
+    /** exportIntervalMillis must be greater than exportTimeoutMillis */
+    const exportIntervalMillis = Number(process.env.OTEL_EXPORT_INTERVAL_MS) || 60000;
+    const exportTimeoutMillis = (Number(process.env.OTEL_EXPORT_INTERVAL_MS) - 1000) || 30000;
 
     let metricExporter;
     if (
@@ -35,17 +32,17 @@ function initializeMetrics(serviceInfo: ServiceInfo) {
       metricExporter = new OTLPMetricExporter();
     }
 
-    /** exportIntervalMillis must be greater than exportTimeoutMillis */
-    const exportIntervalMillis = Number(process.env.OTEL_EXPORT_INTERVAL_MS) || 60000;
-    const exportTimeoutMillis = Number(process.env.OTEL_EXPORT_INTERVAL_MS) - 1000 || 30000;
-
-    meterProvider.addMetricReader(
-      new PeriodicExportingMetricReader({
+    const meterProvider = new MeterProvider({
+      resource: resourceFromAttributes({
+        [SemanticResourceAttributes.SERVICE_NAME]: `${serviceInfo.name}`,
+        [SemanticResourceAttributes.SERVICE_VERSION]: `${serviceInfo.version}`,
+      }),
+      readers: [new PeriodicExportingMetricReader({
         exporter: metricExporter,
         exportIntervalMillis,
         exportTimeoutMillis,
-      })
-    );
+      })]
+    });
 
     metrics.setGlobalMeterProvider(meterProvider);
   }
