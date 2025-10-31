@@ -3,7 +3,7 @@ import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-http';
 import { OTLPMetricExporter as OTLPMetricExporterGRPC } from '@opentelemetry/exporter-metrics-otlp-grpc';
 import { MeterProvider, PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
 import { resourceFromAttributes } from '@opentelemetry/resources';
-import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
+import { ATTR_SERVICE_NAME, ATTR_SERVICE_VERSION } from '@opentelemetry/semantic-conventions';
 
 type ServiceInfo = {
   name: string;
@@ -34,8 +34,8 @@ function initializeMetrics(serviceInfo: ServiceInfo) {
 
     const meterProvider = new MeterProvider({
       resource: resourceFromAttributes({
-        [SemanticResourceAttributes.SERVICE_NAME]: `${serviceInfo.name}`,
-        [SemanticResourceAttributes.SERVICE_VERSION]: `${serviceInfo.version}`,
+        [ATTR_SERVICE_NAME]: `${serviceInfo.name}`,
+        [ATTR_SERVICE_VERSION]: `${serviceInfo.version}`,
       }),
       readers: [
         new PeriodicExportingMetricReader({
