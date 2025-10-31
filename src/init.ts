@@ -20,7 +20,7 @@ function initializeMetrics(serviceInfo: ServiceInfo) {
   if (process.env.OTEL_EXPORTER_OTLP_METRICS_ENDPOINT || process.env.OTEL_EXPORTER_OTLP_ENDPOINT) {
     /** exportIntervalMillis must be greater than exportTimeoutMillis */
     const exportIntervalMillis = Number(process.env.OTEL_EXPORT_INTERVAL_MS) || 60000;
-    const exportTimeoutMillis = (Number(process.env.OTEL_EXPORT_INTERVAL_MS) - 1000) || 30000;
+    const exportTimeoutMillis = Number(process.env.OTEL_EXPORT_INTERVAL_MS) - 1000 || 30000;
 
     let metricExporter;
     if (
@@ -37,11 +37,13 @@ function initializeMetrics(serviceInfo: ServiceInfo) {
         [SemanticResourceAttributes.SERVICE_NAME]: `${serviceInfo.name}`,
         [SemanticResourceAttributes.SERVICE_VERSION]: `${serviceInfo.version}`,
       }),
-      readers: [new PeriodicExportingMetricReader({
-        exporter: metricExporter,
-        exportIntervalMillis,
-        exportTimeoutMillis,
-      })]
+      readers: [
+        new PeriodicExportingMetricReader({
+          exporter: metricExporter,
+          exportIntervalMillis,
+          exportTimeoutMillis,
+        }),
+      ],
     });
 
     metrics.setGlobalMeterProvider(meterProvider);
