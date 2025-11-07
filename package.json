@@ -44,7 +44,7 @@
     "@typescript-eslint/eslint-plugin": "8.46.2",
     "@typescript-eslint/parser": "8.46.2",
     "env-cmd": "11.0.0",
-    "eslint": "9.38.0",
+    "eslint": "9.39.1",
     "eslint-config-prettier": "10.1.8",
     "prettier": "3.6.2",
     "release-it": "19.0.6",
