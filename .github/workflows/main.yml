@@ -15,6 +15,10 @@ on:
     branches:
       - main
 
+permissions:
+  id-token: write # Required for npm publish OIDC
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -62,5 +66,3 @@ jobs:
           echo "PUBLISH_TAG=${publishTag}" >> $GITHUB_OUTPUT
       - run: npm publish --tag ${{ steps.version.outputs.PUBLISH_TAG }} --access public
         if: github.ref == 'refs/heads/release' || contains(github.ref, 'refs/tags/beta-v')
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
