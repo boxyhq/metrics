@@ -52,5 +52,8 @@
     "release-it": "20.0.0",
     "ts-node": "10.9.2",
     "typescript": "6.0.3"
+  },
+  "overrides": {
+    "protobufjs": ">=8.0.1"
   }
 }
