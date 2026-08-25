@@ -51,7 +51,7 @@
     "prettier": "3.9.5",
     "release-it": "20.2.1",
     "ts-node": "10.9.2",
-    "typescript": "6.0.3"
+    "typescript": "7.0.2"
   },
   "overrides": {
     "protobufjs": ">=8.0.1"
