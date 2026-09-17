@@ -6,7 +6,7 @@ type Observation = {
   gaugeAttributes?: Attributes;
 };
 
-const gauges: Record<string, Map<string, Observation>> = {};
+const meters = new Map<string, Map<string, Map<string, Observation>>>();
 
 type GaugeOperationParams = {
   /** OTel meter name */
@@ -32,7 +32,15 @@ const observationKey = (gaugeAttributes?: Attributes): string =>
       );
 
 const observeGauge = ({ meter, name, val, gaugeOptions, gaugeAttributes }: GaugeOperationParams) => {
-  let observations = gauges[name];
+  // An instrument belongs to the meter that created it, so two meters may each
+  // hold an instrument of the same name and the registry is keyed by both.
+  let gauges = meters.get(meter);
+  if (gauges === undefined) {
+    gauges = new Map<string, Map<string, Observation>>();
+    meters.set(meter, gauges);
+  }
+
+  let observations = gauges.get(name);
   if (observations === undefined) {
     const created = new Map<string, Observation>();
     const gauge = acquireMeter(meter).createObservableGauge(name, gaugeOptions);
@@ -45,7 +53,8 @@ const observeGauge = ({ meter, name, val, gaugeOptions, gaugeAttributes }: Gauge
       }
     });
 
-    observations = gauges[name] = created;
+    observations = created;
+    gauges.set(name, created);
   }
 
   observations.set(observationKey(gaugeAttributes), { val, gaugeAttributes });

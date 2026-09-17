@@ -68,9 +68,9 @@ let uniqueSuffix = 0;
 
 const nextName = () => `test.gauge.${process.pid}.${++uniqueSuffix}`;
 
-const gaugeFor = (name: string) => {
-  const gauge = provider.meters.get(METER)?.gauges.get(name);
-  assert.ok(gauge, `no gauge was created for ${name}`);
+const gaugeFor = (name: string, meter = METER) => {
+  const gauge = provider.meters.get(meter)?.gauges.get(name);
+  assert.ok(gauge, `no gauge was created for ${name} on ${meter}`);
   return gauge;
 };
 
@@ -121,6 +121,19 @@ describe('observeGauge', () => {
     observeGauge({ meter: METER, name, val: 2, gaugeAttributes: { b: '2', a: '1' } });
 
     assert.deepEqual(gaugeFor(name).collect(), [{ val: 2, gaugeAttributes: { b: '2', a: '1' } }]);
+  });
+
+  it('keeps one instrument per meter for the same metric name', () => {
+    const name = nextName();
+    const other = 'test.meter.other';
+
+    observeGauge({ meter: METER, name, val: 1 });
+    observeGauge({ meter: other, name, val: 2 });
+
+    assert.equal(gaugeFor(name).callbacks.length, 1);
+    assert.equal(gaugeFor(name, other).callbacks.length, 1);
+    assert.deepEqual(gaugeFor(name).collect(), [{ val: 1, gaugeAttributes: undefined }]);
+    assert.deepEqual(gaugeFor(name, other).collect(), [{ val: 2, gaugeAttributes: undefined }]);
   });
 
   it('keeps one instrument per metric name', () => {
