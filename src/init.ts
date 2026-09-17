@@ -2,13 +2,39 @@ import { DiagConsoleLogger, DiagLogLevel, diag, metrics } from '@opentelemetry/a
 import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-http';
 import { OTLPMetricExporter as OTLPMetricExporterGRPC } from '@opentelemetry/exporter-metrics-otlp-grpc';
 import { MeterProvider, PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
-import { resourceFromAttributes } from '@opentelemetry/resources';
+import {
+  defaultResource,
+  detectResources,
+  envDetector,
+  resourceFromAttributes,
+  serviceInstanceIdDetector,
+  type Resource,
+} from '@opentelemetry/resources';
 import { ATTR_SERVICE_NAME, ATTR_SERVICE_VERSION } from '@opentelemetry/semantic-conventions';
 
 type ServiceInfo = {
   name: string;
   version: string;
 };
+
+/**
+ *  Build the Resource that identifies this process in every exported metric.
+ *
+ *  See https://opentelemetry.io/docs/specs/semconv/resource/
+ */
+function buildResource(serviceInfo: ServiceInfo): Resource {
+  // Replicas of a service share one series identity unless service.instance.id
+  // sets them apart; environment attributes merge last so a deployment can override it.
+  return defaultResource()
+    .merge(detectResources({ detectors: [serviceInstanceIdDetector] }))
+    .merge(
+      resourceFromAttributes({
+        [ATTR_SERVICE_NAME]: `${serviceInfo.name}`,
+        [ATTR_SERVICE_VERSION]: `${serviceInfo.version}`,
+      })
+    )
+    .merge(detectResources({ detectors: [envDetector] }));
+}
 
 /**
  *  Configure the exporter and also a global MeterProvider.
@@ -33,10 +59,7 @@ function initializeMetrics(serviceInfo: ServiceInfo) {
     }
 
     const meterProvider = new MeterProvider({
-      resource: resourceFromAttributes({
-        [ATTR_SERVICE_NAME]: `${serviceInfo.name}`,
-        [ATTR_SERVICE_VERSION]: `${serviceInfo.version}`,
-      }),
+      resource: buildResource(serviceInfo),
       readers: [
         new PeriodicExportingMetricReader({
           exporter: metricExporter,
@@ -54,4 +77,4 @@ function initializeMetrics(serviceInfo: ServiceInfo) {
   }
 }
 
-export { initializeMetrics };
+export { buildResource, initializeMetrics, type ServiceInfo };
