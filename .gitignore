@@ -31,3 +31,6 @@ typings/
 
 # build out
 dist
+
+# test build out
+dist-test
