@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { execFileSync } from 'node:child_process';
 import { afterEach, describe, it } from 'node:test';
 import {
   ATTR_SERVICE_NAME,
@@ -40,6 +41,20 @@ const cleanEnv = {
   OTEL_SERVICE_NAME: undefined,
 };
 
+// The service instance id is generated once per process, so telling two
+// processes apart needs two processes; each one prints its own id.
+const generatedServiceInstanceIdInChildProcess = (): string => {
+  const script = `
+    const { buildResource } = require(${JSON.stringify(require.resolve('../src/init'))});
+    process.stdout.write(String(buildResource(${JSON.stringify(SERVICE_INFO)}).attributes['service.instance.id']));
+  `;
+  const env = { ...process.env };
+  delete env.OTEL_RESOURCE_ATTRIBUTES;
+  delete env.OTEL_SERVICE_NAME;
+
+  return execFileSync(process.execPath, ['-e', script], { env, encoding: 'utf8' });
+};
+
 describe('buildResource', () => {
   afterEach(() => {
     delete process.env.OTEL_RESOURCE_ATTRIBUTES;
@@ -71,13 +86,22 @@ describe('buildResource', () => {
     });
   });
 
-  it('gives each process a different generated service instance id', () => {
+  it('keeps the generated service instance id stable within a process', () => {
     withEnv(cleanEnv, () => {
       const first = buildResource(SERVICE_INFO).attributes[ATTR_SERVICE_INSTANCE_ID];
       const second = buildResource(SERVICE_INFO).attributes[ATTR_SERVICE_INSTANCE_ID];
 
-      assert.notEqual(first, second);
+      assert.equal(first, second);
     });
+  });
+
+  it('gives each process a different generated service instance id', () => {
+    const first = generatedServiceInstanceIdInChildProcess();
+    const second = generatedServiceInstanceIdInChildProcess();
+
+    assert.match(first, UUID);
+    assert.match(second, UUID);
+    assert.notEqual(first, second);
   });
 
   it('takes the service instance id from OTEL_RESOURCE_ATTRIBUTES', () => {
